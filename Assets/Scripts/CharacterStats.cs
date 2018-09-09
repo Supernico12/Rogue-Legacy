@@ -57,6 +57,7 @@ public class CharacterStats: MonoBehaviour {
 
 		  TextMeshPro damagetext =Instantiate(textmesh, transform.position, Quaternion.identity);
 		damagetext.text = "-" + damage.ToString();
+		StartCoroutine(DamageAnimation());
 		
 	}
 
@@ -72,5 +73,16 @@ public class CharacterStats: MonoBehaviour {
 	void Die()
 	{
 		Destroy(gameObject);
+	}
+
+
+	IEnumerator DamageAnimation()
+	{
+		SpriteRenderer renderer = GetComponentInChildren<SpriteRenderer>();
+		Color32 lastcolor = renderer.color;
+		renderer.color = Color.red;
+		
+		yield return new WaitForSeconds(1);
+		renderer.color = lastcolor;
 	}
 }
