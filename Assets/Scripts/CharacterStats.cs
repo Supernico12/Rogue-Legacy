@@ -11,6 +11,7 @@ public class CharacterStats: MonoBehaviour {
 	[SerializeField] float Damage = 10;
 	[SerializeField] float attackSpeed = 1;
 	[SerializeField] float armor = 0;
+	[SerializeField] float movementSpeed;
 	[SerializeField] TextMeshPro textmesh;
 	[SerializeField] Vector2 knockBack;
 
@@ -31,9 +32,13 @@ public class CharacterStats: MonoBehaviour {
 	{
 		get { return knockBack; }
 	}
-	public float GetAtqueSpeed
+	public float GetAttackSpeed
 	{
 		get { return attackSpeed; }
+	}
+	public float GetMovementSpeed
+	{
+		get { return movementSpeed; }
 	}
 
 	public float GetDamage
@@ -62,7 +67,7 @@ public class CharacterStats: MonoBehaviour {
 	}
 
 
-	void OnDrawGizmos()
+	void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.red;
 		Gizmos.DrawWireCube(transform.position + offset, radious);

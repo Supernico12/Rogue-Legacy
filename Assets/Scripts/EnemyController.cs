@@ -8,6 +8,7 @@ public class EnemyController : MonoBehaviour {
 	CharacterStats stats;
 	[SerializeField] float detectionRadious;
 	[SerializeField] float attackRadious;
+	[SerializeField] float speed;
 
 
 	Collider2D myColider;
@@ -15,7 +16,13 @@ public class EnemyController : MonoBehaviour {
 
 	bool isAttacking;
 	Transform target;
+	bool isAlerted;
 
+
+	public void SetAlerted(bool state)
+	{
+		isAlerted = state;
+	}
 	void Start()
 	{
 		target = PlayerManager.instance.player.transform;
@@ -28,17 +35,35 @@ public class EnemyController : MonoBehaviour {
 	void Update()
 	{
 		float distance = Vector2.Distance(transform.position, target.position);
-		
-		if (distance < attackRadious)
+
+
+		animator.SetBool("isMoving", false);
+		if (distance < detectionRadious || isAlerted)
 		{
-			Attack();
+
+			FaceTarget();
+			Chase();
+			if (distance < attackRadious)
+			{
+				Attack();
+			}
 		}
-		lastAttack -= Time.deltaTime;
-		FaceTarget();
 		
+		lastAttack -= Time.deltaTime;
+		
+
 
 	}
 
+	void Chase()
+	{
+		if (!isAttacking)
+		{
+			float horizontalMovement = (target.position - transform.position).normalized.x;
+			transform.Translate(new Vector2(horizontalMovement, 0) * Time.deltaTime * speed);
+			animator.SetBool("isMoving", true);
+		}
+	}
 	void FaceTarget()
 	{
 		if (!isAttacking)
@@ -58,7 +83,7 @@ public class EnemyController : MonoBehaviour {
 		if (lastAttack <= 0)
 		{
 			animator.SetTrigger("attack");
-			lastAttack = stats.GetAtqueSpeed;
+			lastAttack = stats.GetAttackSpeed;
 			isAttacking = true;
 		}
 		
@@ -85,7 +110,7 @@ public class EnemyController : MonoBehaviour {
 		}
 		isAttacking = false;
 	}
-	void OnDrawGizmos()
+	void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.yellow;
 		Gizmos.DrawWireSphere(transform.position, detectionRadious);

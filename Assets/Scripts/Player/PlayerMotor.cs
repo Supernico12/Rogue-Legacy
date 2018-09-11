@@ -8,7 +8,7 @@ public class PlayerMotor : MonoBehaviour {
 
 
 	CapsuleCollider2D colliderplayer;
-	CharacterStats stats;
+
 	[SerializeField]
 	float movementSpeed = 1;
 	[SerializeField]
@@ -19,71 +19,58 @@ public class PlayerMotor : MonoBehaviour {
 	int layerMask;
 	ContactFilter2D filter;
 
-	[SerializeField]
-	Collider2D attackArea;
 
-	float lastAttack;
+
+	
+	
+	
 	bool canMove = true;
 	bool isGrounded;
 	Animator animator;
-	float attackSpeed;
+	
 	Vector2 movement = Vector2.zero;
 
+	public void SetCanMove ( bool state)
+	{
+		canMove = state;
+	}
+	 
 	// Use this for initialization
 	void Start() {
 		colliderplayer = GetComponent<CapsuleCollider2D>();
 		animator = GetComponentInChildren<Animator>();
-		stats = GetComponent<CharacterStats>();
-		attackSpeed = stats.GetAtqueSpeed;
+
+		movementSpeed = GetComponent<CharacterStats>().GetMovementSpeed;
 
 		
 		filter.useTriggers = false;
 		filter.SetLayerMask ( Physics2D.GetLayerCollisionMask(gameObject.layer));
 		filter.useLayerMask = true;
 
+		
 	}
-	public void FinishedAttacking()
-	{
-		canMove = true;
-		/*
-		Collider2D[] inRange;
-		ContactFilter2D contactFilter = new ContactFilter2D();
-		attackArea.OverlapCollider(contactFilter, inRange);
-		*/
-		float direction = transform.localScale.x; 
-		Collider2D[] results = new Collider2D[10];
-		Physics2D.OverlapBoxNonAlloc(stats.offset * direction + transform.position, stats.radious, 0, results);
-		foreach( Collider2D result in results)
-		{
-			if (result != null && result != colliderplayer)
-			{
-				
-					CharacterStats targetstats = result.GetComponent<CharacterStats>();
-					if (targetstats != null)
-						targetstats.TakeDamage(stats.GetDamage);
-					Rigidbody2D rb = result.GetComponent<Rigidbody2D>();
-					if (rb != null)
-						rb.AddForce(new Vector2(stats.GetKnockBack.x * direction, stats.GetKnockBack.y), ForceMode2D.Impulse);
-				
-			}
-			
-		}
-	}
+	
 
+	
 	void Move()
 	{
 		float x = Input.GetAxisRaw("Horizontal");
 		
 
 		float  movementHorizontal = x;
+		
+			
+		
+
+
 		if (!canMove)
 		{
-			movementHorizontal = 0;
-		}
-
-
-
+			movement.x = 0;
+		}else
+		{
 			movement.x = movementHorizontal;
+		}
+			
 
 
 		if (movementHorizontal != 0)
@@ -98,24 +85,7 @@ public class PlayerMotor : MonoBehaviour {
 
 		
 	}
-	void Attack()
-	{
-		if (Input.GetButton("Attack"))
-		{
-			if (lastAttack <= 0)
-			{
-				animator.SetTrigger("attack");
-				lastAttack =  attackSpeed;
-				canMove = false;
-			}
-			
-		}
 
-	}
-	void Update()
-	{
-		lastAttack -= Time.deltaTime;
-	}
 
 
 	void IsGrounded()
@@ -140,6 +110,7 @@ public class PlayerMotor : MonoBehaviour {
 			isGrounded = false;
 
 		}
+		/*
 		foreach (Collider2D result in results)
 		{
 			if (result != null)
@@ -147,13 +118,17 @@ public class PlayerMotor : MonoBehaviour {
 				Debug.Log(result.name);
 			}
 		}
+		*/
 	}
+
+	
 		// Update is called once per frame
 		void FixedUpdate() {
 
 			Move();
-			Attack();
+		
 			IsGrounded();
+			
 
 			if (isGrounded)
 			{
