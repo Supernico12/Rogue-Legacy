@@ -11,20 +11,27 @@ public class PlayerFighting : MonoBehaviour {
 	Transform arrowSpawnPosition;
 	[SerializeField]
 	float ArrowForce;
+	[SerializeField]
+	float combatTime = 5;
 
 	CharacterStats stats;
 	CapsuleCollider2D colliderplayer;
 	PlayerMotor playerMotor;
-	float lastAttack;
+	float combatTimer;
+	float lastAttack = -10;
+	public bool isOnCombat { get; private set; }
 	Animator animator;
 
 	[Header("Animations")]
-	[SerializeField] AnimationClip replazableAttack;
-	[SerializeField] AnimationClip replazableMove;
+	[SerializeField] AnimationClip replaceableAttack;
+	[SerializeField] AnimationClip replaceableMove;
+	[SerializeField] AnimationClip replasceableIdle;
 	[SerializeField] AnimationClip[] playerAnimationsAttack;
 	[SerializeField] AnimationClip[] playerAnimationsMove;
+	[SerializeField] AnimationClip[] playerAnimationsIdle;
 	AnimatorOverrideController overrideAnimator;
 
+	
 
 	
 
@@ -42,11 +49,12 @@ public class PlayerFighting : MonoBehaviour {
 	{
 		if (Input.GetButton("Attack"))
 		{
-			if (lastAttack <= 0)
+			if (combatTimer <= 0)
 			{
-				overrideAnimator[replazableAttack.name] = playerAnimationsAttack[0];
+				lastAttack = Time.time;
+				overrideAnimator[replaceableAttack.name] = playerAnimationsAttack[0];
 				animator.SetTrigger("attack");
-				lastAttack = stats.GetAttackSpeed;
+				combatTimer = stats.GetAttackSpeed;
 				playerMotor.SetCanMove(false);
 			}
 
@@ -87,12 +95,13 @@ public class PlayerFighting : MonoBehaviour {
 
 		if (Input.GetButton("BowAttack"))
 		{
-			if (lastAttack <= 0)
+			if (combatTimer<= 0)
 			{
 				// ChangeAttack Animation
-				overrideAnimator[replazableAttack.name] = playerAnimationsAttack[1];
+				lastAttack = Time.time;
+				overrideAnimator[replaceableAttack.name] = playerAnimationsAttack[1];
 				animator.SetTrigger("attack");
-				lastAttack = stats.GetAttackSpeed;
+				combatTimer= stats.GetAttackSpeed;
 				playerMotor.SetCanMove(false);
 			}
 		}
@@ -114,6 +123,25 @@ public class PlayerFighting : MonoBehaviour {
 	{
 		SwordAttack();
 		BowAttack();
-		lastAttack -= Time.deltaTime;
+		combatTimer -= Time.deltaTime;
+
+		if (Time.time - lastAttack < combatTime)
+		{
+			isOnCombat = true;
+		}else
+		{
+			isOnCombat = false;
+		}
+
+		if (isOnCombat)
+		{
+			overrideAnimator[replaceableMove.name] = playerAnimationsMove[1];
+			overrideAnimator[replasceableIdle.name] = playerAnimationsIdle[1];
+		}else {
+
+			overrideAnimator[replaceableMove.name] = playerAnimationsMove[0];
+			overrideAnimator[replasceableIdle.name] = playerAnimationsIdle[0];
+		}
+		
 	}
 }

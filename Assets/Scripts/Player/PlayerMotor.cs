@@ -8,6 +8,7 @@ public class PlayerMotor : MonoBehaviour {
 
 
 	CapsuleCollider2D colliderplayer;
+	PlayerFighting playerCombat;
 
 	[SerializeField]
 	float movementSpeed = 1;
@@ -15,7 +16,7 @@ public class PlayerMotor : MonoBehaviour {
 	float gravity = 10;
 	[SerializeField]
 	float jumpStrenght = 8;
-
+	[SerializeField] BackgroundScrolling scrolling;
 	int layerMask;
 	ContactFilter2D filter;
 
@@ -38,8 +39,8 @@ public class PlayerMotor : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		colliderplayer = GetComponent<CapsuleCollider2D>();
-		animator = GetComponentInChildren<Animator>();
-
+		animator = GetComponent<Animator>();
+		playerCombat = GetComponent<PlayerFighting>();
 		movementSpeed = GetComponent<CharacterStats>().GetMovementSpeed;
 
 		
@@ -70,7 +71,6 @@ public class PlayerMotor : MonoBehaviour {
 		{
 			movement.x = movementHorizontal;
 		}
-			
 
 
 		if (movementHorizontal != 0)
@@ -86,16 +86,16 @@ public class PlayerMotor : MonoBehaviour {
 		
 	}
 
-
+	
 
 	void IsGrounded()
 	{
 		// isGrounded =Physics.CheckCapsule(colliderplayer.bounds.center, new Vector3(colliderplayer.bounds.center.x, colliderplayer.bounds.min.y - 0.1f, colliderplayer.bounds.center.z), 0.9f);
 
 		//get the radius of the players capsule collider, and make it a tiny bit smaller than that
-		float radius = colliderplayer.size.x * 0.9f;
+		float radius = 0.25f;
 		//get the position (assuming its right at the bottom) and move it up by almost the whole radius
-		Vector3 pos = transform.position - Vector3.up * (radius * 0.9f);
+		Vector3 pos = transform.position - new Vector3(0,0.6f,0);
 		
 		//returns true if the sphere touches something on that layer
 		Collider2D[] results = new Collider2D[16];
@@ -153,7 +153,10 @@ public class PlayerMotor : MonoBehaviour {
 			Vector2 finalMovement = new Vector2(movement.x * movementSpeed, movement.y);
 
 			transform.Translate(finalMovement * Time.deltaTime);
-			//controller.Move(finalMovement  * Time.deltaTime);
-		}
+
+
+		scrolling.SetDirection(finalMovement.x);
+		//controller.Move(finalMovement  * Time.deltaTime);
+	}
 	
 }
