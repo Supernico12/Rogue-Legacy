@@ -28,7 +28,7 @@ public class BackgroundScrolling : MonoBehaviour {
 	}
 	void Update()
 	{
-		Debug.Log(layers[6].position.x);
+		//Debug.Log(layers[6].position.x);
 		for (int i = 0; i < scrollSpeed.Length; i++) { 
 
 			

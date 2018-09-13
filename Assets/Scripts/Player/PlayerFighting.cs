@@ -13,12 +13,17 @@ public class PlayerFighting : MonoBehaviour {
 	float ArrowForce;
 	[SerializeField]
 	float combatTime = 5;
+    [SerializeField]
+    Weapon weapon1;
 
+    int currentAttackCycle = 3;
+    int cycleLenght = 3;
 	CharacterStats stats;
 	CapsuleCollider2D colliderplayer;
 	PlayerMotor playerMotor;
 	float combatTimer;
 	float lastAttack = -10;
+    
 	public bool isOnCombat { get; private set; }
 	Animator animator;
 
@@ -49,13 +54,15 @@ public class PlayerFighting : MonoBehaviour {
 	{
 		if (Input.GetButton("Attack"))
 		{
-			if (combatTimer <= 0)
-			{
-				lastAttack = Time.time;
-				overrideAnimator[replaceableAttack.name] = playerAnimationsAttack[0];
+            if (combatTimer <= 0)
+            {
+                lastAttack = Time.time;
+                overrideAnimator[replaceableAttack.name] = weapon1.animations[currentAttackCycle % cycleLenght];
+                animator.SetFloat("attackSpeed", 1 / weapon1.combatPattern[currentAttackCycle % cycleLenght]);
 				animator.SetTrigger("attack");
-				combatTimer = stats.GetAttackSpeed;
+				combatTimer =  1/weapon1.baseSpeed ;
 				playerMotor.SetCanMove(false);
+                
 			}
 
 		}
@@ -80,14 +87,15 @@ public class PlayerFighting : MonoBehaviour {
 
 				CharacterStats targetstats = result.GetComponent<CharacterStats>();
 				if (targetstats != null)
-					targetstats.TakeDamage(stats.GetDamage);
-				Rigidbody2D rb = result.GetComponent<Rigidbody2D>();
-				if (rb != null)
-					rb.AddForce(new Vector2(stats.GetKnockBack.x * direction, stats.GetKnockBack.y), ForceMode2D.Impulse);
+					targetstats.TakeDamage(weapon1.baseDamage * weapon1.combatPattern[currentAttackCycle % cycleLenght]);
+				//Rigidbody2D rb = result.GetComponent<Rigidbody2D>();
+				 //if (rb != null)
+					//rb.AddForce(new Vector2(stats.GetKnockBack.x * direction, stats.GetKnockBack.y), ForceMode2D.Impulse);
 
 			}
 
 		}
+        currentAttackCycle++;
 	}
 
 	void BowAttack()
