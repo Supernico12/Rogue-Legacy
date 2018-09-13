@@ -6,10 +6,10 @@ public class EnemyController : MonoBehaviour {
 
 	Animator animator;
 	CharacterStats stats;
-	[SerializeField] float detectionRadious;
-	[SerializeField] float attackRadious;
-	[SerializeField] float speed;
-
+	[SerializeField] float detectionRadious = 2;
+	[SerializeField] float attackRadious =1;
+	[SerializeField] float speed = 1;
+    [SerializeField] float stoppingDistance = 1;
 
 	Collider2D myColider;
 	float lastAttack;
@@ -42,7 +42,10 @@ public class EnemyController : MonoBehaviour {
 		{
 
 			FaceTarget();
-			Chase();
+            if (distance > stoppingDistance)
+            {
+                Chase();
+            }
 			if (distance < attackRadious)
 			{
 				Attack();
