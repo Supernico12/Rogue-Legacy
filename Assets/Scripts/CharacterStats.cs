@@ -17,7 +17,7 @@ public class CharacterStats: MonoBehaviour {
 
 
 	float currentHealth;
-	
+	 bool isTargetable = true;
 	[Header("AttackArea")]
 	public Vector3 offset;
 	public Vector2 radious;
@@ -53,20 +53,26 @@ public class CharacterStats: MonoBehaviour {
 
 	public void TakeDamage(float damage)
 	{
-		damage -= armor;
-		damage = Mathf.Clamp(damage, 1, int.MaxValue);
-		currentHealth -= damage;
+		if (isTargetable)
+		{
+			damage -= armor;
+			damage = Mathf.Clamp(damage, 1, int.MaxValue);
+			currentHealth -= damage;
 
-		if (currentHealth <= 0)
-			Die();
+			if (currentHealth <= 0)
+				Die();
 
-		  TextMeshPro damagetext =Instantiate(textmesh, transform.position, Quaternion.identity);
-		damagetext.text = "-" + damage.ToString();
-		StartCoroutine(DamageAnimation());
+			TextMeshPro damagetext = Instantiate(textmesh, transform.position, Quaternion.identity);
+			damagetext.text = "-" + damage.ToString();
+			StartCoroutine(DamageAnimation());
+		}
 		
 	}
 
-
+	public void SetTargeatable(bool state)
+	{
+		isTargetable = state;
+	}
 	void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.red;
