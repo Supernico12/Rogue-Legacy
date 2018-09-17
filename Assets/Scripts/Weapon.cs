@@ -12,6 +12,7 @@ public class Weapon : ScriptableObject {
     [Header("Pattern")]
     public float[] combatPattern;
     public AnimationClip[] animations;
+	public float[] speedperAttack;
     [Header("AttackArea")]
     public float radious;
     public Vector3 offset;

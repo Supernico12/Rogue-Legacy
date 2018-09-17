@@ -34,3 +34,5 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+Assets/Scripts/EnemyController.cs
+Assets/Scenes/SampleScene.unity
