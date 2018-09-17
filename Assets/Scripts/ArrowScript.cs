@@ -4,26 +4,12 @@ using UnityEngine;
 
 public class ArrowScript : MonoBehaviour {
 
-	[SerializeField] float lifeTime;
 	float damage;
-	Rigidbody2D rb;
 	// 10 = Enemy 8 = Ground
 
-
-	void Start(){
-		rb = GetComponent<Rigidbody2D>();
-		StartCoroutine(GravityStart());
-		
-	}
 	public void SetDamage(float amount)
 	{
 		damage = amount;
-	}
-	IEnumerator GravityStart(){
-
-		rb.gravityScale = 0;
-		yield return new WaitForSeconds(lifeTime);
-		rb.gravityScale = 5;
 	}
 	void OnTriggerEnter2D(Collider2D col)
 	{

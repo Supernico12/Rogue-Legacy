@@ -3,9 +3,7 @@ guid: d35d8fe06680ebf469b93a14e579191c
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - textmesh: {fileID: 114859767705620160, guid: 777bb7047537bfc49b7d0d367672afd0,
-      type: 2}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
