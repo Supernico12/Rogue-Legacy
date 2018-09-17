@@ -9,6 +9,7 @@ public class PlayerMotor : MonoBehaviour {
 
 	CapsuleCollider2D colliderplayer;
 	PlayerFighting playerCombat;
+	CharacterStats stats;
 
 	[SerializeField]
 	float movementSpeed = 1;
@@ -17,6 +18,9 @@ public class PlayerMotor : MonoBehaviour {
 	[SerializeField]
 	float jumpStrenght = 8;
 	[SerializeField] BackgroundScrolling scrolling;
+
+	[SerializeField] float rollCooldown;
+
 	int layerMask;
 	ContactFilter2D filter;
 
@@ -27,10 +31,11 @@ public class PlayerMotor : MonoBehaviour {
 	
 	bool canMove = true;
 	bool isGrounded;
+	bool isRoling;
 	Animator animator;
 	
 	Vector2 movement = Vector2.zero;
-
+	float lastRoll;
 	public void SetCanMove ( bool state)
 	{
 		canMove = state;
@@ -41,7 +46,8 @@ public class PlayerMotor : MonoBehaviour {
 		colliderplayer = GetComponent<CapsuleCollider2D>();
 		animator = GetComponent<Animator>();
 		playerCombat = GetComponent<PlayerFighting>();
-		movementSpeed = GetComponent<CharacterStats>().GetMovementSpeed;
+		stats = GetComponent<CharacterStats>();
+		movementSpeed = stats.GetMovementSpeed;
 
 		
 		filter.useTriggers = false;
@@ -59,20 +65,24 @@ public class PlayerMotor : MonoBehaviour {
 		
 
 		float  movementHorizontal = x;
-		
-			
-		
 
 
-		if (!canMove)
+
+
+		if (!isRoling)
 		{
-			movement.x = 0;
-		}else
-		{
-			movement.x = movementHorizontal;
+			if (!canMove)
+			{
+				movement.x = movementHorizontal / 3;
+			}
+			else
+			{
+				movement.x = movementHorizontal;
+			}
 		}
+		
 
-
+		
 		if (movementHorizontal != 0)
 		{
 			transform.localScale = new Vector3(movementHorizontal, 1, 1);
@@ -86,8 +96,31 @@ public class PlayerMotor : MonoBehaviour {
 		
 	}
 
-	
+	void Roll()
+	{
+		if (Input.GetButtonDown("Roll"))
+		{
+			if(lastRoll <= 0)
+			{
+				//Roll
+				isRoling = true;
+				animator.SetBool("isRoll", true);
+				stats.SetTargeatable(false);
+				movementSpeed *= 2;
+				movement.x = transform.localScale.x;
+				lastRoll = rollCooldown;
+			
+			}
+		}
+	}
 
+	public void OnFinishRoll()
+	{
+		animator.SetBool("isRoll", false);
+		stats.SetTargeatable(true);
+		movementSpeed /= 2;
+		isRoling = false;
+	}
 	void IsGrounded()
 	{
 		// isGrounded =Physics.CheckCapsule(colliderplayer.bounds.center, new Vector3(colliderplayer.bounds.center.x, colliderplayer.bounds.min.y - 0.1f, colliderplayer.bounds.center.z), 0.9f);
@@ -125,11 +158,13 @@ public class PlayerMotor : MonoBehaviour {
 		// Update is called once per frame
 		void FixedUpdate() {
 
-			Move();
-		
-			IsGrounded();
-			
 
+			IsGrounded();
+			Move();
+			Roll();
+
+
+		lastRoll -= Time.deltaTime;
 			if (isGrounded)
 			{
 

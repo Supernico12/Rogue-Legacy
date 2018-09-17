@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour {
 
-
+	
 
 	#region Singleton
 
@@ -16,4 +16,5 @@ public class PlayerManager : MonoBehaviour {
 	#endregion
 
 	public GameObject player;
+	
 }
