@@ -40,7 +40,10 @@ public class CharacterStats: MonoBehaviour {
 	{
 		get { return movementSpeed; }
 	}
-
+	public float GetMaxHealth
+	{
+		get{ return health;}
+	}
 	public float GetDamage
 	{
 		get { return Damage; }
