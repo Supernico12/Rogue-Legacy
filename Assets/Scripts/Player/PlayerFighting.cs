@@ -15,20 +15,14 @@ public class PlayerFighting : MonoBehaviour {
 	float combatTime = 5;
     [SerializeField]
     Weapon weapon1;
-	[SerializeField]
-	float combatCycleReset; 
 
-
-
-	
-	int currentAttackCycle = 3;
+    int currentAttackCycle = 3;
     int cycleLenght = 3;
 	CharacterStats stats;
 	CapsuleCollider2D colliderplayer;
 	PlayerMotor playerMotor;
 	float combatTimer;
 	float lastAttack = -10;
-	float lastCombatCycle;
     
 	public bool isOnCombat { get; private set; }
 	Animator animator;
@@ -55,23 +49,19 @@ public class PlayerFighting : MonoBehaviour {
 		stats = GetComponent<CharacterStats>();
 		playerMotor = GetComponent<PlayerMotor>();
 		colliderplayer = GetComponent<CapsuleCollider2D>();
-		currentAttackCycle = weapon1.combatPattern.Length ;
-		cycleLenght = currentAttackCycle;
 	}
 	void SwordAttack()
 	{
 		if (Input.GetButton("Attack"))
 		{
-			if (combatTimer <= 0)
-			{
-				lastAttack = Time.time;
-				overrideAnimator[replaceableAttack.name] = weapon1.animations[(currentAttackCycle  )% cycleLenght];
-				animator.SetFloat("attackSpeed", 1 / weapon1.combatPattern[currentAttackCycle % cycleLenght]);
+            if (combatTimer <= 0)
+            {
+                lastAttack = Time.time;
+                overrideAnimator[replaceableAttack.name] = weapon1.animations[currentAttackCycle % cycleLenght];
+                animator.SetFloat("attackSpeed", 1 / weapon1.combatPattern[currentAttackCycle % cycleLenght]);
 				animator.SetTrigger("attack");
-				combatTimer = weapon1.combatPattern[(currentAttackCycle ) % cycleLenght  ];
-				Debug.Log(combatTimer.ToString());
+				combatTimer =  1/weapon1.baseSpeed ;
 				playerMotor.SetCanMove(false);
-				lastCombatCycle = combatCycleReset;
                 
 			}
 
@@ -79,7 +69,6 @@ public class PlayerFighting : MonoBehaviour {
 
 	}
 
-	
 	public void FinishedAttacking()
 	{
 		playerMotor.SetCanMove(true);
@@ -98,7 +87,7 @@ public class PlayerFighting : MonoBehaviour {
 
 				CharacterStats targetstats = result.GetComponent<CharacterStats>();
 				if (targetstats != null)
-					targetstats.TakeDamage(weapon1.baseDamage * weapon1.combatPattern[(currentAttackCycle ) % cycleLenght]);
+					targetstats.TakeDamage(weapon1.baseDamage * weapon1.combatPattern[currentAttackCycle % cycleLenght]);
 				//Rigidbody2D rb = result.GetComponent<Rigidbody2D>();
 				 //if (rb != null)
 					//rb.AddForce(new Vector2(stats.GetKnockBack.x * direction, stats.GetKnockBack.y), ForceMode2D.Impulse);
@@ -106,9 +95,7 @@ public class PlayerFighting : MonoBehaviour {
 			}
 
 		}
-	
         currentAttackCycle++;
-		
 	}
 
 	void BowAttack()
@@ -145,7 +132,6 @@ public class PlayerFighting : MonoBehaviour {
 		SwordAttack();
 		BowAttack();
 		combatTimer -= Time.deltaTime;
-		lastCombatCycle -= Time.deltaTime;
 
 		if (Time.time - lastAttack < combatTime)
 		{
@@ -153,10 +139,6 @@ public class PlayerFighting : MonoBehaviour {
 		}else
 		{
 			isOnCombat = false;
-		}
-		if(lastCombatCycle < 0)
-		{
-			currentAttackCycle = cycleLenght;
 		}
 
 		if (isOnCombat)
