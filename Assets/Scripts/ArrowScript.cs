@@ -44,14 +44,14 @@ public class ArrowScript : MonoBehaviour {
 			if(transform.eulerAngles.z > maxRotation){
 
 			currentRot -= Time.deltaTime * roateSpeed;
-			transform.Rotate(0,0,currentRot);
+			transform.Rotate(0,0, currentRot  * (speed < 0?  -speed: speed ) / speed );
 			//Debug.Log(transform.eulerAngles.z);
 
 			
 			}
 		}
 			transform.Translate((transform.right )* speed * Time.deltaTime ,Space.World);
-			Debug.Log( (transform.right + Vector3.right ).x /2 * Time.deltaTime * speed );
+			//Debug.Log( (transform.right + Vector3.right ).x /2 * Time.deltaTime * speed );
 
 	}
 	void OnTriggerEnter2D(Collider2D col)

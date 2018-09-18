@@ -133,10 +133,11 @@ public class PlayerFighting : MonoBehaviour {
 	{
 		playerMotor.SetCanMove(true);
 		float direction = transform.localScale.x;
-		Rigidbody2D  rb =Instantiate(arrow, arrowSpawnPosition.position, Quaternion.identity).GetComponent<Rigidbody2D>();
+		ArrowScript script =Instantiate(arrow, arrowSpawnPosition.position, Quaternion.identity).GetComponent<ArrowScript>();
 		//rb.AddForce(new Vector2(ArrowForce * direction, 0 ),ForceMode2D.Impulse);
-		rb.GetComponent<ArrowScript>().SetDamage(stats.GetDamage);
-		rb.transform.localScale *= transform.localScale.x;
+		script.SetDamage(stats.GetDamage);
+		script.transform.localScale *= transform.localScale.x;
+		script.SetSpeed(15 * direction);
 		// Bow Attack 
 	}
 
