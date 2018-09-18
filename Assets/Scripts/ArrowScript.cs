@@ -7,6 +7,14 @@ public class ArrowScript : MonoBehaviour {
 	[SerializeField] float lifeTime;
 	float damage;
 	Rigidbody2D rb;
+	[SerializeField]
+	float speed;
+	bool isFalling;
+	[SerializeField]
+	float roateSpeed;
+	[SerializeField]
+	float maxRotation;
+	float currentRot;
 	// 10 = Enemy 8 = Ground
 
 
@@ -19,11 +27,32 @@ public class ArrowScript : MonoBehaviour {
 	{
 		damage = amount;
 	}
+	public void SetSpeed(float amount){
+		speed = amount;
+	}
 	IEnumerator GravityStart(){
 
-		rb.gravityScale = 0;
+	
 		yield return new WaitForSeconds(lifeTime);
-		rb.gravityScale = 5;
+		
+		isFalling = true;
+		transform.Rotate(0,0,-.5f);
+	}
+	void Update(){
+		
+		if(isFalling){
+			if(transform.eulerAngles.z > maxRotation){
+
+			currentRot -= Time.deltaTime * roateSpeed;
+			transform.Rotate(0,0,currentRot);
+			//Debug.Log(transform.eulerAngles.z);
+
+			
+			}
+		}
+			transform.Translate((transform.right )* speed * Time.deltaTime ,Space.World);
+			Debug.Log( (transform.right + Vector3.right ).x /2 * Time.deltaTime * speed );
+
 	}
 	void OnTriggerEnter2D(Collider2D col)
 	{
