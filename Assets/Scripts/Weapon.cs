@@ -2,18 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewWeapon" , menuName = "Weapon")]
-public class Weapon : ScriptableObject {
+[CreateAssetMenu(fileName = "NewWeapon", menuName = "Weapon")]
+public class Weapon : ScriptableObject
+{
 
     [Header("Stats")]
     public float baseDamage = 10;
     public float baseSpeed = 1;
 
-    [Header("Pattern")]
-    public float[] combatPattern;
-    public AnimationClip[] animations;
-	public float[] speedperAttack;
-    [Header("AttackArea")]
-    public float radious;
-    public Vector3 offset;
+
+    public WeaponType type;
+
+    public virtual void Interact()
+    {
+
+    }
+}
+
+public enum WeaponType
+{
+    Sword, Dagger, Hammer
 }
