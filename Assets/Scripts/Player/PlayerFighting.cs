@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[RequireComponent(typeof(PlayerAnimatorController))]
 public class PlayerFighting : MonoBehaviour
 {
 
 
-    [SerializeField]
-    GameObject arrow;
-    [SerializeField]
-    Transform arrowSpawnPosition;
-    [SerializeField]
-    float ArrowForce;
+
     [SerializeField]
     float combatTime = 5;
     [SerializeField]
@@ -19,153 +16,86 @@ public class PlayerFighting : MonoBehaviour
     [SerializeField]
     Weapon weapon2;
 
-    [SerializeField]
-    float combatCycleReset;
 
 
 
 
-    int currentAttackCycle = 3;
+
     int cycleLenght = 3;
     CharacterStats stats;
     CapsuleCollider2D colliderplayer;
     PlayerMotor playerMotor;
     float combatTimer;
     float lastAttack = -10;
-    float lastCombatCycle;
 
     public bool isOnCombat { get; private set; }
     Animator animator;
 
     [Header("Animations")]
-    [SerializeField] AnimationClip replaceableAttack;
+
     [SerializeField] AnimationClip replaceableMove;
     [SerializeField] AnimationClip replasceableIdle;
-    [SerializeField] AnimationClip[] playerAnimationsAttack;
+
     [SerializeField] AnimationClip[] playerAnimationsMove;
     [SerializeField] AnimationClip[] playerAnimationsIdle;
     AnimatorOverrideController overrideAnimator;
 
-
-
-
+    MeleeWeaponController meleeWeapon;
+    RangedWeaponController rangedWeapon;
 
     void Start()
     {
 
         animator = GetComponentInChildren<Animator>();
-        overrideAnimator = new AnimatorOverrideController(animator.runtimeAnimatorController);
-        animator.runtimeAnimatorController = overrideAnimator;
+
         stats = GetComponent<CharacterStats>();
         playerMotor = GetComponent<PlayerMotor>();
         colliderplayer = GetComponent<CapsuleCollider2D>();
-        currentAttackCycle = weapon1.combatPattern.Length;
-        cycleLenght = currentAttackCycle;
+        meleeWeapon = GetComponent<MeleeWeaponController>();
+        rangedWeapon = GetComponent<RangedWeaponController>();
+        //currentAttackCycle = weapon1.combatPattern.Length;
+        //cycleLenght = currentAttackCycle;
     }
-    void SwordAttack()
-    {
-        if (Input.GetButton("Attack"))
-        {
-            if (combatTimer <= 0)
-            {
-                lastAttack = Time.time;
-                overrideAnimator[replaceableAttack.name] = weapon1.animations[(currentAttackCycle) % cycleLenght];
-                animator.SetFloat("attackSpeed", 1 / weapon1.combatPattern[currentAttackCycle % cycleLenght]);
-                animator.SetTrigger("attack");
-                combatTimer = weapon1.combatPattern[(currentAttackCycle) % cycleLenght];
-                Debug.Log(combatTimer.ToString());
-                playerMotor.SetCanMove(false);
-                lastCombatCycle = combatCycleReset;
-
-            }
-
-        }
-
-    }
-
-
-    public void FinishedAttacking()
-    {
-        playerMotor.SetCanMove(true);
-        /*
-		Collider2D[] inRange;
-		ContactFilter2D contactFilter = new ContactFilter2D();
-		attackArea.OverlapCollider(contactFilter, inRange);
-		*/
-        float direction = transform.localScale.x;
-        Collider2D[] results = new Collider2D[10];
-        Physics2D.OverlapBoxNonAlloc(stats.offset * direction + transform.position, stats.radious, 0, results);
-        foreach (Collider2D result in results)
-        {
-            if (result != null && result != colliderplayer)
-            {
-
-                CharacterStats targetstats = result.GetComponent<CharacterStats>();
-                if (targetstats != null)
-                    targetstats.TakeDamage(weapon1.baseDamage * weapon1.combatPattern[(currentAttackCycle) % cycleLenght]);
-                //Rigidbody2D rb = result.GetComponent<Rigidbody2D>();
-                //if (rb != null)
-                //rb.AddForce(new Vector2(stats.GetKnockBack.x * direction, stats.GetKnockBack.y), ForceMode2D.Impulse);
-
-            }
-
-        }
-
-        currentAttackCycle++;
-
-    }
-
-    void BowAttack()
-    {
-
-        if (Input.GetButton("Attack2"))
-        {
-            if (combatTimer <= 0)
-            {
-                // ChangeAttack Animation
-                lastAttack = Time.time;
-                overrideAnimator[replaceableAttack.name] = playerAnimationsAttack[1];
-                animator.SetTrigger("attack");
-                combatTimer = stats.GetAttackSpeed;
-                playerMotor.SetCanMove(false);
-            }
-        }
-    }
-
-
-    public void FinishAttackingBow()
-    {
-        playerMotor.SetCanMove(true);
-        float direction = transform.localScale.x;
-        ArrowScript script = Instantiate(arrow, arrowSpawnPosition.position, Quaternion.identity).GetComponent<ArrowScript>();
-        //rb.AddForce(new Vector2(ArrowForce * direction, 0 ),ForceMode2D.Impulse);
-        script.SetDamage(stats.GetDamage);
-        script.transform.localScale *= transform.localScale.x;
-        script.SetSpeed(15 * direction);
-        // Bow Attack 
-    }
-
-
-    void Attack()
+    void AttackInput()
     {
         if (combatTimer <= 0)
         {
-            if (Input.GetButtonDown("Attack1"))
+            if (Input.GetButtonDown("Attack"))
             {
-                weapon1.Interact();
+                Attack(weapon1);
+
             }
             if (Input.GetButtonDown("Attack2"))
             {
-                weapon2.Interact();
+                Attack(weapon2);
             }
+
+
         }
+    }
+
+    void Attack(Weapon weapon)
+    {
+        if (weapon.type == WeaponType.Sword)
+        {
+            combatTimer = meleeWeapon.Attack(weapon);
+        }
+        else if (weapon.type == WeaponType.Bow)
+        {
+            combatTimer = rangedWeapon.BowAttack(weapon);
+        }
+
+        lastAttack = Time.time;
+        playerMotor.SetCanMove(false);
     }
     void Update()
     {
-        SwordAttack();
-        BowAttack();
+
+        // BowAttack();
+        AttackInput();
+
         combatTimer -= Time.deltaTime;
-        lastCombatCycle -= Time.deltaTime;
+
 
         if (Time.time - lastAttack < combatTime)
         {
@@ -175,22 +105,35 @@ public class PlayerFighting : MonoBehaviour
         {
             isOnCombat = false;
         }
-        if (lastCombatCycle < 0)
+
+        /*
+    if (isOnCombat)
+    {
+        overrideAnimator[replaceableMove.name] = playerAnimationsMove[1];
+        overrideAnimator[replasceableIdle.name] = playerAnimationsIdle[1];
+    }
+    else
+    {
+
+        overrideAnimator[replaceableMove.name] = playerAnimationsMove[0];
+        overrideAnimator[replasceableIdle.name] = playerAnimationsIdle[0];
+    }
+        */
+    }
+
+
+    void OnDrawGizmos()
+    {
+        if (weapon1 != null)
         {
-            currentAttackCycle = cycleLenght;
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireCube(transform.position + weapon1.offset, weapon1.radious);
         }
 
-        if (isOnCombat)
+        if (weapon2 != null)
         {
-            overrideAnimator[replaceableMove.name] = playerAnimationsMove[1];
-            overrideAnimator[replasceableIdle.name] = playerAnimationsIdle[1];
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(transform.position + weapon2.offset, weapon2.radious);
         }
-        else
-        {
-
-            overrideAnimator[replaceableMove.name] = playerAnimationsMove[0];
-            overrideAnimator[replasceableIdle.name] = playerAnimationsIdle[0];
-        }
-
     }
 }

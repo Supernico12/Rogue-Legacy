@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewWeapon", menuName = "Weapon")]
+[CreateAssetMenu(fileName = "NewMeleeWeapon", menuName = "Weapon/Melee")]
 public class Weapon : ScriptableObject
 {
 
@@ -10,16 +10,20 @@ public class Weapon : ScriptableObject
     public float baseDamage = 10;
     public float baseSpeed = 1;
 
+    [Header("Pattern")]
+    public float[] combatPattern;
+    public AnimationClip[] animations;
+    public float[] speedperAttack;
+    [Header("AttackArea")]
+    public Vector2 radious;
+    public Vector3 offset;
 
-    public WeaponType type;
+    public WeaponType type = WeaponType.Sword;
 
-    public virtual void Interact()
-    {
 
-    }
 }
 
 public enum WeaponType
 {
-    Sword, Dagger, Hammer
+    Sword, Dagger, Hammer, Bow
 }

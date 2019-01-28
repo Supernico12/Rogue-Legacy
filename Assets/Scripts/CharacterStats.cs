@@ -80,7 +80,7 @@ public class CharacterStats : MonoBehaviour
     }
     void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(transform.position + offset, radious);
 
 

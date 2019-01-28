@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ece352988d41e7d478c686ab1f1a7763, type: 3}
+  m_Name: BaseBow 1
+  m_EditorClassIdentifier: 
+  baseDamage: 3
+  baseSpeed: 0.1
+  combatPattern: []
+  animations:
+  - {fileID: 7400000, guid: 85489842c0f9042499993bb230b918d0, type: 2}
+  speedperAttack: []
+  radious: {x: 0, y: 0}
+  offset: {x: 0, y: 0, z: 0}
+  type: 3
+  arrowPrefab: {fileID: 1570910550838388, guid: 202b4f000208f514084d7e5fc0860ad1,
+    type: 3}
+  arrowSpawnOffset: {x: 0.5, y: 0, z: 0}
+  arrowForce: 15

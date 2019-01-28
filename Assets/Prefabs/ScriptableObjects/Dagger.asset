@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0953bfa0a42fb424db663f514d322df7, type: 3}
-  m_Name: BaseSword
+  m_Name: Dagger
   m_EditorClassIdentifier: 
   baseDamage: 10
-  baseSpeed: 4
+  baseSpeed: 1
   combatPattern:
+  - 0.3
+  - 0.3
   - 0.5
-  - 0.5
-  - 1
   animations:
   - {fileID: 7400000, guid: c663d86b7337d5d489f6e2ec1f81f9ec, type: 2}
   - {fileID: 7400000, guid: 0718be42479ad0949adabd2cbb859592, type: 2}
   - {fileID: 7400000, guid: a7ea534dceac9ae4ea6e4bd0b51fc97e, type: 2}
   speedperAttack:
-  - 0.5
-  - 0.5
+  - 0.6
+  - 0.6
   - 0.1
-  radious: {x: 1, y: 2}
-  offset: {x: 0.5, y: 0, z: 0}
+  radious: {x: 0.7, y: 1}
+  offset: {x: 0.3, y: 0, z: 0}
   type: 0

@@ -11,6 +11,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] float attackRadious;
     [SerializeField] float speed;
     [SerializeField] float stopDistance = 1;
+    [SerializeField] LayerMask layerMask;
     public float recoveryTime = .25f;
 
     Collider2D myColider;
@@ -100,7 +101,7 @@ public class EnemyController : MonoBehaviour
         float direction = transform.localScale.x;
         Collider2D[] results = new Collider2D[10];
 
-        Physics2D.OverlapBoxNonAlloc(stats.offset * direction + transform.position, stats.radious, 0, results);
+        Physics2D.OverlapBoxNonAlloc(stats.offset * direction + transform.position, stats.radious, 0, results, layerMask);
         foreach (Collider2D result in results)
         {
 
