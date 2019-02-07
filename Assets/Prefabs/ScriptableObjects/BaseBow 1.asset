@@ -20,6 +20,7 @@ MonoBehaviour:
   speedperAttack: []
   radious: {x: 0, y: 0}
   offset: {x: 0, y: 0, z: 0}
+  sprite: {fileID: 21300000, guid: 9bb2cf82a3672d34fabdc07947d70001, type: 3}
   type: 3
   arrowPrefab: {fileID: 1570910550838388, guid: 202b4f000208f514084d7e5fc0860ad1,
     type: 3}

@@ -66,6 +66,10 @@ public class MeleeWeaponController : MonoBehaviour
 
     public float Attack(Weapon weapon)
     {
+        if (lastWeapon != weapon)
+        {
+            currentAttackCycle = cycleLenght;
+        }
         lastWeapon = weapon;
 
         Debug.Log(weapon.animations[(currentAttackCycle) % cycleLenght]);

@@ -17,7 +17,7 @@ public class Weapon : ScriptableObject
     [Header("AttackArea")]
     public Vector2 radious;
     public Vector3 offset;
-
+    public Sprite sprite;
     public WeaponType type = WeaponType.Sword;
 
 

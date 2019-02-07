@@ -11,10 +11,20 @@ public class PlayerFighting : MonoBehaviour
 
     [SerializeField]
     float combatTime = 5;
-    [SerializeField]
-    Weapon weapon1;
-    [SerializeField]
-    Weapon weapon2;
+    [SerializeField] GameObject pickableWeapon;
+    [SerializeField] float unequipForce = 10f;
+
+    public Weapon[] weapons;
+    public Weapon weapon1
+    {
+        get { return weapons[0]; }
+        set { weapons[0] = value; }
+    }
+    public Weapon weapon2
+    {
+        get { return weapons[1]; }
+        set { weapons[1] = value; }
+    }
 
 
 
@@ -28,17 +38,19 @@ public class PlayerFighting : MonoBehaviour
     float combatTimer;
     float lastAttack = -10;
 
+
     public bool isOnCombat { get; private set; }
     Animator animator;
+    public event System.Action OnWeaponChange;
+
+
 
     [Header("Animations")]
 
-    [SerializeField] AnimationClip replaceableMove;
-    [SerializeField] AnimationClip replasceableIdle;
-
     [SerializeField] AnimationClip[] playerAnimationsMove;
     [SerializeField] AnimationClip[] playerAnimationsIdle;
-    AnimatorOverrideController overrideAnimator;
+
+    PlayerAnimatorController playerAnimatorController;
 
     MeleeWeaponController meleeWeapon;
     RangedWeaponController rangedWeapon;
@@ -53,6 +65,7 @@ public class PlayerFighting : MonoBehaviour
         colliderplayer = GetComponent<CapsuleCollider2D>();
         meleeWeapon = GetComponent<MeleeWeaponController>();
         rangedWeapon = GetComponent<RangedWeaponController>();
+        playerAnimatorController = GetComponent<PlayerAnimatorController>();
         //currentAttackCycle = weapon1.combatPattern.Length;
         //cycleLenght = currentAttackCycle;
     }
@@ -106,23 +119,32 @@ public class PlayerFighting : MonoBehaviour
             isOnCombat = false;
         }
 
-        /*
-    if (isOnCombat)
-    {
-        overrideAnimator[replaceableMove.name] = playerAnimationsMove[1];
-        overrideAnimator[replasceableIdle.name] = playerAnimationsIdle[1];
-    }
-    else
-    {
 
-        overrideAnimator[replaceableMove.name] = playerAnimationsMove[0];
-        overrideAnimator[replasceableIdle.name] = playerAnimationsIdle[0];
-    }
-        */
+        if (isOnCombat)
+        {
+            playerAnimatorController.OverrideMove(playerAnimationsMove[1]);
+            playerAnimatorController.OverrideIdle(playerAnimationsIdle[1]);
+
+        }
+        else
+        {
+
+            playerAnimatorController.OverrideMove(playerAnimationsMove[0]);
+            playerAnimatorController.OverrideIdle(playerAnimationsIdle[0]);
+
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            ChangeWeapons();
+        }
+
     }
 
 
     void OnDrawGizmos()
+
     {
         if (weapon1 != null)
         {
@@ -135,5 +157,36 @@ public class PlayerFighting : MonoBehaviour
             Gizmos.color = Color.green;
             Gizmos.DrawWireCube(transform.position + weapon2.offset, weapon2.radious);
         }
+    }
+
+    public void EquipWeapon(Weapon weapon, int index)
+    {
+
+        if (weapons[index] != null)
+        {
+            UnequipWeapon(index);
+        }
+        weapons[index] = weapon;
+        OnWeaponChange.Invoke();
+    }
+
+    public void ChangeWeapons()
+    {
+        Weapon weapon = weapon2;
+        weapon2 = weapon1;
+        weapon1 = weapon;
+        OnWeaponChange.Invoke();
+    }
+
+    public void UnequipWeapon(int index)
+    {
+        GameObject pickWeapon = Instantiate(pickableWeapon, transform.position, Quaternion.identity);
+
+        pickWeapon.GetComponent<PickableWeapon>().weapon = weapons[index];
+        pickWeapon.GetComponent<SpriteRenderer>().sprite = weapons[index].sprite;
+        Rigidbody2D rb = pickWeapon.GetComponent<Rigidbody2D>();
+
+        rb.AddForce(Interactable.ThrowForce(), ForceMode2D.Impulse);
+        OnWeaponChange.Invoke();
     }
 }
